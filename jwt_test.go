@@ -68,7 +68,7 @@ func TestServeHTTPOK(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			cfg := Config{
 				JwtHeaders: map[string]string{"Name": "name"},
-				Keys:       []string{"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzyis1ZjfNB0bBgKFMSv\nvkTtwlvBsaJq7S5wA+kzeVOVpVWwkWdVha4s38XM/pa/yr47av7+z3VTmvDRyAHc\naT92whREFpLv9cj5lTeJSibyr/Mrm/YtjCZVWgaOYIhwrXwKLqPr/11inWsAkfIy\ntvHWTxZYEcXLgAXFuUuaS3uF9gEiNQwzGTU1v0FqkqTBr4B8nW3HCN47XUu0t8Y0\ne+lf4s4OxQawWD79J9/5d3Ry0vbV3Am1FtGJiJvOwRsIfVChDpYStTcHTCMqtvWb\nV6L11BWkpzGXSW4Hv43qa+GSYOD2QU68Mb59oSk2OB+BtOLpJofmbGEGgvmwyCI9\nMwIDAQAB\n-----END PUBLIC KEY-----"},
+				Keys:       []string{"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAov9nZ9aU6fn7xwK/ytCu\nxGx70UCY1SMgN+4+f27xwK/ihmflfi4NxC+j9QV0CgRgnnRQ8FCI69ny8RqBwTci\nXYAIhm/sN2wWRYnRdeKZwt2NB/q1aA6fm7uj2GAdHNLQ713J0UCFZEL4Ofc84bfK\nu+7ghnxTOew3PzXc/R79pNaM8NP+3T6Qe0p19pmIG086vf7ieWUXs3dUMSeWHI0x\nVj05WXbxOE7rLx9V1xeYwGOYD4h/zn+DsaeHcFR5Zv36Rvx7LOQ8S4eYqMnCTa7H\nN9G5bpq57OdDw8GPIL7ECMZXOAI/x6L3UVYSBg0hTBgQRn054RM6Hp3jiz9Dlsn8\niQIDAQAB\n-----END PUBLIC KEY-----"},
 			}
 			ctx := context.Background()
 			nextCalled := false
@@ -85,7 +85,7 @@ func TestServeHTTPOK(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			req.Header["Authorization"] = []string{"Bearer eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.JlX3gXGyClTBFciHhknWrjo7SKqyJ5iBO0n-3S2_I7cIgfaZAeRDJ3SQEbaPxVC7X8aqGCOM-pQOjZPKUJN8DMFrlHTOdqMs0TwQ2PRBmVAxXTSOZOoEhD4ZNCHohYoyfoDhJDP4Qye_FCqu6POJzg0Jcun4d3KW04QTiGxv2PkYqmB7nHxYuJdnqE3704hIS56pc_8q6AW0WIT0W-nIvwzaSbtBU9RgaC7ZpBD2LiNE265UBIFraMDF8IAFw9itZSUCTKg1Q-q27NwwBZNGYStMdIBDor2Bsq5ge51EkWajzZ7ALisVp-bskzUsqUf77ejqX_CBAqkNdH1Zebn93A"}
+			req.Header["Authorization"] = []string{"Bearer eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.TnHVsM5_N0SKi_HCwlz3ys1cDktu10g_sKkjqzVe5k09z-bmByflWPFWjAbwgRCKAc77kF8BjDNv0gisAPurBxgxNGxioDFehhcb0IS0YeCAWpzRfBMT6gQZ1gZeNM2Dg_yf4shPhF4rcUCGqnFFzIDSU9Rv2NNMK5DPO4512uTxAQUMHpi5PGTki-zykqTB10Ju1L4jRhmJwJDtGcfdHPlEKKUrFPfYl3RPZLOfdyAqSJ8Gi0R3ymDffmXHz08AJUAY_Kapk8laggIYcvFJhYGJBWZpcy7NWMiOIjEI3bogki4o7z0-Z1xMZdZ9rqypQ1MB44F8VZS2KkPfEmhSog"}
 			if len(tt.forwardedFor) > 0 {
 				req.Header["X-Forwarded-For"] = []string{tt.forwardedFor}
 			}
@@ -720,5 +720,34 @@ func TestServeHTTPExpiration(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestServeHTTPWithCookie(t *testing.T) {
+	cfg := Config{
+		Keys: []string{"-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAov9nZ9aU6fn7xwK/ytCu\nxGx70UCY1SMgN+4+f27xwK/ihmflfi4NxC+j9QV0CgRgnnRQ8FCI69ny8RqBwTci\nXYAIhm/sN2wWRYnRdeKZwt2NB/q1aA6fm7uj2GAdHNLQ713J0UCFZEL4Ofc84bfK\nu+7ghnxTOew3PzXc/R79pNaM8NP+3T6Qe0p19pmIG086vf7ieWUXs3dUMSeWHI0x\nVj05WXbxOE7rLx9V1xeYwGOYD4h/zn+DsaeHcFR5Zv36Rvx7LOQ8S4eYqMnCTa7H\nN9G5bpq57OdDw8GPIL7ECMZXOAI/x6L3UVYSBg0hTBgQRn054RM6Hp3jiz9Dlsn8\niQIDAQAB\n-----END PUBLIC KEY-----"},
+	}
+	ctx := context.Background()
+	nextCalled := false
+	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) { nextCalled = true })
+
+	jwt, err := New(ctx, next, &cfg, "test-traefik-jwt-plugin")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	recorder := httptest.NewRecorder()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://localhost", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	req.AddCookie(&http.Cookie{Name: "jwt", Value: "eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.TnHVsM5_N0SKi_HCwlz3ys1cDktu10g_sKkjqzVe5k09z-bmByflWPFWjAbwgRCKAc77kF8BjDNv0gisAPurBxgxNGxioDFehhcb0IS0YeCAWpzRfBMT6gQZ1gZeNM2Dg_yf4shPhF4rcUCGqnFFzIDSU9Rv2NNMK5DPO4512uTxAQUMHpi5PGTki-zykqTB10Ju1L4jRhmJwJDtGcfdHPlEKKUrFPfYl3RPZLOfdyAqSJ8Gi0R3ymDffmXHz08AJUAY_Kapk8laggIYcvFJhYGJBWZpcy7NWMiOIjEI3bogki4o7z0-Z1xMZdZ9rqypQ1MB44F8VZS2KkPfEmhSog"})
+
+	jwt.ServeHTTP(recorder, req)
+
+	if nextCalled == false {
+		t.Fatal("next.ServeHTTP was not called")
 	}
 }
